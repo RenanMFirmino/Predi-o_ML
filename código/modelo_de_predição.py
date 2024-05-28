@@ -7,7 +7,12 @@ Original file is located at
     https://colab.research.google.com/drive/1xwXQlp5iXDe0INa8N4IZQstQf2FsClF3
 """
 
-# Import the packages
+#Instalando os packages
+#!pip install tensorflow
+#!pip install keras
+#!pip install yfinance
+
+# Importando os packages
 import math
 import numpy as np
 import pandas as pd
@@ -21,10 +26,8 @@ from datetime import datetime as dt
 from datetime import timedelta
 pd.options.mode.chained_assignment = None
 
-#!pip install tensorflow
-
-acao = "MGLU3.SA"
-
+#acao = "MGLU3.SA" #Magalu
+acao = "PETR4.SA" #Petrobras
 inicio = "2014-12-31"
 final = dt.today().strftime('%Y-%m-%d')
 
@@ -59,7 +62,7 @@ dados_entre_0_e_1 = np.array(dados_entre_0_e_1).reshape(len(dados_entre_0_e_1), 
 
 dados_entre_0_e_1
 
-#
+#transformando os dados em valores entre 0 e 1
 dados_para_treinamento = dados_entre_0_e_1[0: tamanho_dados_treinamento, :]
 
 #dados que serão usados para gerar resultado
@@ -119,7 +122,7 @@ modelo.compile(optimizer='adam', loss='mean_squared_error')
 #butch size é depois de quantas em quantas amostras o modelo irá otimizar os parametros
 #epoch é quantas vezes o modelo irá rodar os dados aprendendo
 
-modelo.fit(treinamento_x, treinamento_y,batch_size=10, epochs=50)
+modelo.fit(treinamento_x, treinamento_y,batch_size=10, epochs=100)
 
 #criar os dados de teste
 
@@ -131,9 +134,13 @@ teste_y = cotacao[tamanho_dados_treinamento:, :]
 for i in range(60, len(dados_teste)):
   teste_x.append(dados_teste[i-60:i, 0])
 
+
+
 #reshape
 teste_x = np.array(teste_x)
 teste_x = teste_x.reshape(teste_x.shape[0], teste_x.shape[1], 1)
+
+
 
 #pegando predições do modelo
 
@@ -144,6 +151,8 @@ predicoes = modelo.predict(teste_x)
 predicoes = escalador.inverse_transform(predicoes)
 
 predicoes
+
+
 
 #pegando o erro medio quadratico (RMSE)
 
@@ -167,6 +176,9 @@ plt.show()
 
 df_teste.sort_index()
 df_teste
+
+_df_4.plot(kind='scatter', x='Close', y='predicoes', s=32, alpha=.8)
+plt.gca().spines[['top', 'right',]].set_visible(False)
 
 #calcular media de acertos e lucro
 
